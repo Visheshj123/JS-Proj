@@ -12,6 +12,9 @@ loadEventListeners();
 
 //load all event loadEventListeners
 function loadEventListeners() {
+  //DOM load event
+  document.addEventListener('DOMContentLoaded',getTasks);
+
   //Add task event
   form.addEventListener('submit', addTask);
 
@@ -34,8 +37,11 @@ function addTask(e) {
     //Get value in new task and put it in to a li
     let newTask = taskInput.value;
     const li = document.createElement('li');
-    li.className = 'collection-item'
+    li.className = 'collection-item';
     li.textContent = newTask;
+
+    //Call function to store item in local storage
+    storeTaskLocal(taskInput.value);
 
     //Create delete item for li
     const link = document.createElement('a');
@@ -60,15 +66,26 @@ function addTask(e) {
 }
 
 function removeTask(e){
-  if(e.target.parentElement.parentElement.className == 'collection-item'){
-    if(confirm('Are you sure homie?')){
-      e.target.parentElement.parentElement.remove();
-    }
-    e.preventDefault();
+
+  //textcontent of li
+  console.log(e.target.parentElement.parentElement.textContent);
+  taskToRemove = e.target.parentElement.parentElement.textContent;
+  tasks = JSON.parse(localStorage.getItem('tasks'));
+
+  //get index in task of e, then remove that index
+  console.log(`The index of ${taskToRemove} is ${tasks.indexOf(taskToRemove)}`);
+  tasks.splice(tasks.indexOf(taskToRemove), 1);
+
+  localStorage.setItem('tasks', JSON.stringify(tasks.splice(tasks.indexOf(taskToRemove), 1)));
+
+  if(confirm('Are you sure homie?')){
+    e.target.parentElement.parentElement.remove();
   }
+
 }
 
 function clearTasks(e){
+localStorage.clear()
 
   if (e.target.classList.contains('clear-tasks')){
     while(taskList.firstChild){
@@ -76,6 +93,7 @@ function clearTasks(e){
     }
 
   }
+  e.preventDefault();
 
 }
 
@@ -95,3 +113,63 @@ function filterTasks(e){
   e.preventDefault();
 
 }
+
+
+function storeTaskLocal(taskInput){
+  //console.log('called store local task function');
+  let tasks;
+  if (localStorage.getItem('tasks') == null){
+    tasks = [];
+  } else {
+    tasks = JSON.parse(localStorage.getItem('tasks'));
+  }
+  tasks.push(taskInput);
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+
+function getTasks(e){
+  //get array of tasks in local stoarge
+  let tasks;
+  if (localStorage.getItem('tasks') == null){
+    tasks = [];
+  }else{
+    tasks = JSON.parse(localStorage.getItem('tasks'));
+  }
+//for each tasks, insert into li and append to taskList
+tasks.forEach(function(task){
+  const li = document.createElement('li');
+  li.className = 'collection-item';
+  li.textContent = task;
+
+  const link = document.createElement('a');
+  link.className = 'delete-item secondary-content';
+  link.innerHTML = '<i class = "fa fa-remove"></i>';
+  li.appendChild(link);
+  taskList.appendChild(li);
+});
+
+}
+
+/*
+  const li = document.createElement('li');
+  li.className = 'collection-item';
+  li.textContent = newTask;
+
+  //Call function to store item in local storage
+  storeTaskLocal(taskInput.value);
+
+  //Create delete item for li
+  const link = document.createElement('a');
+  link.className = 'delete-item secondary-content';
+
+  //add icon to delete-item
+  link.innerHTML = '<i class = "fa fa-remove"></i>'
+
+  //apend link to li
+  li.appendChild(link)
+
+
+  //append to ul
+  taskList.appendChild(li);
+  */
