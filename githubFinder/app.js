@@ -11,6 +11,7 @@ const searchuser = document.getElementById('searchUser').addEventListener('keyup
               }else{
                 ui.clearAlert();
                 ui.showProfile(data.profile);
+                ui.showRepos(data.repos)
 
               }
           }  );
