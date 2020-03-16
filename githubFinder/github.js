@@ -2,7 +2,7 @@ class GitHub{
   constructor(){
     this.config = {
       headers: {
-        Authorization: 'token fa1a21f9f66099fa8a95055426b038899d184945'
+        Authorization: 'token ENTERTOKEN'
       }
     }
     this.repos_count =3;
